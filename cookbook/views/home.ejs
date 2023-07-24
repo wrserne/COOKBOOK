@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Family Cookbook</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+    <video id="video-background" autoplay muted loop>
+        <source src="/coverr-chef-preparing-a-dish-at-a-restaurant-6248-1080p.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+
+    <h1>Welcome to the Family Cookbook</h1>
+
+    <% if (authenticated) { %>
+        <!-- Display the form to add new recipes -->
+        <h2>Add a New Recipe</h2>
+        <form action="/add" method="POST">
+            <label for="title">Title:</label>
+            <input type="text" id="title" name="title" required>
+            <br>
+            <label for="ingredients">Ingredients:</label>
+            <textarea id="ingredients" name="ingredients" rows="4" required></textarea>
+            <br>
+            <label for="instructions">Instructions:</label>
+            <textarea id="instructions" name="instructions" rows="8" required></textarea>
+            <br>
+            <label for="imageUrl">Image URL:</label>
+            <input type="text" id="imageUrl" name="imageUrl" required>
+            <br>
+            <button type="submit">Add Recipe</button>
+        </form>
+    <% } else { %>
+        <!-- Display a message for non-authenticated users -->
+        <p>Please log in to add recipes.</p>
+
+        <!-- Add a link to the registration page -->
+        <p>Don't have an account? <a href="/register">Register here</a>.</p>
+    <% } %>
+
+   <!-- Carousel with Recipes -->
+<div class="carousel-container">
+    <div class="carousel">
+        <% recipes.forEach(function(recipe, index) { %>
+            <div class="carousel-item <%= index === 0 ? 'active' : '' %>">
+                <a href="/recipe/<%= recipe.id %>"> <!-- Add a link to the recipe details page -->
+                    <img src="<%= recipe.image_url %>" alt="<%= recipe.title %>">
+                    <h2><%= recipe.title %></h2>
+                </a>
+                <% if (authenticated && recipe.userId === userId) { %>
+                    <!-- Show delete button for recipes added by the current user -->
+                    <form action="/delete" method="POST">
+                        <input type="hidden" name="recipeId" value="<%= recipe.id %>">
+                        <button type="submit">Delete</button>
+                    </form>
+                <% } %>
+            </div>
+        <% }); %>
+    </div>
+    <button class="carousel-button" onclick="scrollCarousel(-1)">Previous</button>
+    <button class="carousel-button" onclick="scrollCarousel(1)">Next</button>
+</div>
+
+    <% if (!authenticated) { %>
+        <!-- Display login form for non-authenticated users -->
+        <h2>Login</h2>
+        <form action="/login" method="POST">
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" required>
+            <br>
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required>
+            <br>
+            <button type="submit">Login</button>
+        </form>
+
+        <!-- Display a message or alternative content for non-authenticated users -->
+        <p>Please log in to add or delete recipes.</p>
+
+        <!-- Add a link to the registration page -->
+        <p>Don't have an account? <a href="/register">Register here</a>.</p>
+    <% } %>
+
+    <script src="/js/script.js"></script>
+</body>
+</html>
